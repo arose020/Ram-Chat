@@ -1,6 +1,8 @@
 package com.rosenthal.ramchat;
 
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -77,10 +79,27 @@ public class Login extends JFrame {
 		contentPane.add(lblExamplePort);
 		
 		JButton btnLogin = new JButton("Login");
+		btnLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String name = txtUsername.getText();
+				String ipAddress = txtIpAddress.getText();
+				int port = Integer.parseInt(txtPort.getText());
+				login(name, ipAddress, port);
+			}
+		});
 		btnLogin.setBounds(102, 229, 89, 23);
 		contentPane.add(btnLogin);
 	}
 	
+	/**
+	 * Logs you into the game!
+	 */
+	
+	private void login(String name, String address, int port) {
+		dispose();
+		System.out.println(name + ", " + address + ", " + port);
+	}
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
