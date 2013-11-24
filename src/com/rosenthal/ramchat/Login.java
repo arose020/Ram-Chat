@@ -79,11 +79,11 @@ public class Login extends JFrame {
 		lblPort.setBounds(132, 155, 29, 14);
 		contentPane.add(lblPort);
 
-		lblExampleIp = new JLabel("(Example: 192.168.0.2)");
+		lblExampleIp = new JLabel("(Example: 192.168.1.1)");
 		lblExampleIp.setBounds(87, 130, 120, 14);
 		contentPane.add(lblExampleIp);
 
-		lblExamplePort = new JLabel("(Example: Port: 8123)");
+		lblExamplePort = new JLabel("(Example: Port: 1337)");
 		lblExamplePort.setBounds(93, 204, 108, 14);
 		contentPane.add(lblExamplePort);
 
