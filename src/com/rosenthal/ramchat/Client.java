@@ -37,6 +37,8 @@ public class Client extends JFrame {
 	
 	private DatagramSocket socket;
 	private InetAddress ip;
+	
+	private Thread send;
 
 	public Client(String name, String address, int port) {
 		setTitle("Ram Chat Client");
@@ -66,6 +68,20 @@ public class Client extends JFrame {
 		return true;
 	}
 	
+	private void send(final byte[] data) {
+		send = new Thread("Send") {
+			public void run() {
+				DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
+				try {
+					socket.send(packet);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		send.start();
+	}
+
 	private String receive() {
 		byte[] data = new byte[1024];
 		DatagramPacket packet = new DatagramPacket(data, data.length);
