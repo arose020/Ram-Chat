@@ -166,6 +166,7 @@ public class Client extends JFrame {
 		if (message.equals("")) return; //ANTI-SPAM LINE
 		message = name + ": " + message;
 		console(message);
+		message = "/m/" + message;
 		send(message.getBytes());
 		txtMessage.setText("");
 	}
