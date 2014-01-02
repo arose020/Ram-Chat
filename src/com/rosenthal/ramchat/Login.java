@@ -11,7 +11,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
-import javax.swing.SwingConstants;
 
 public class Login extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -54,17 +53,17 @@ public class Login extends JFrame {
 		contentPane.setLayout(null);
 
 		txtUsername = new JTextField();
-		txtUsername.setBounds(66, 103, 165, 28);
+		txtUsername.setBounds(66, 45, 165, 28);
 		contentPane.add(txtUsername);
 		txtUsername.setColumns(10);
 
 		JLabel lblEnterUsername = new JLabel("Choose Username:");
-		lblEnterUsername.setBounds(81, 26, 150, 23);
+		lblEnterUsername.setBounds(81, 23, 150, 23);
 		contentPane.add(lblEnterUsername);
 
 		txtIpAddress = new JTextField();
 		txtIpAddress.setColumns(10);
-		txtIpAddress.setBounds(66, 48, 165, 28);
+		txtIpAddress.setBounds(66, 107, 165, 28);
 		contentPane.add(txtIpAddress);
 
 		txtPort = new JTextField();
@@ -77,7 +76,7 @@ public class Login extends JFrame {
 		contentPane.add(lblIpAddress);
 
 		lblPort = new JLabel("Port:");
-		lblPort.setBounds(135, 171, 36, 16);
+		lblPort.setBounds(133, 171, 36, 16);
 		contentPane.add(lblPort);
 
 		lblExampleIp = new JLabel("(Example: 192.168.1.1)");
@@ -90,17 +89,6 @@ public class Login extends JFrame {
 
 		JButton btnLogin = new JButton("Login");
 		btnLogin.addActionListener(new ActionListener() {
-			
-			/**
-			 * Checks to see if an action is performed and logs variables if
-			 * there is an action
-			 * <p>
-			 * <b>starts the actual login method</b>
-			 * 
-			 * @see login(string, string, int)
-			 * @author Andrew Rosenthal
-			 * @implements ActionEvent Interface
-			 */
 
 			public void actionPerformed(ActionEvent e) {
 				String name = txtUsername.getText();
@@ -109,7 +97,7 @@ public class Login extends JFrame {
 				login(name, ipAddress, port);
 			}
 		});
-		btnLogin.setBounds(92, 255, 127, 23);
+		btnLogin.setBounds(81, 255, 127, 23);
 		contentPane.add(btnLogin);
 	}
 
