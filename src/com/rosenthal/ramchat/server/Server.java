@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Server implements Runnable {
 	
@@ -57,13 +58,27 @@ public class Server implements Runnable {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					String string = new String(packet.getData());
-					clients.add(new ServerClient("Andrew", packet.getAddress(), packet.getPort(), 50));
+					proscess(packet);
+					
+					clients.add(new ServerClient("Admin", packet.getAddress(), packet.getPort(), 50));
 					System.out.println(clients.get(0).address.toString() + ":" + clients.get(0).port);
-					System.out.println(string);
 				}
 			}
 		};
 		recieve.start();
+	}
+	
+	private void proscess(DatagramPacket packet) {
+		String string = new String(packet.getData());
+		if (string.startsWith("/c/")) {
+			//Unique Identifier Basicly does: UUID id = UUID.randomUUID(); in a realistic way
+			int id = UniqueIdentifier.getIdentifier();
+			System.out.println("Client Identifier: " + id);
+			clients.add(new ServerClient(string.substring(3, string.length()), packet.getAddress(), packet.getPort(), id));
+			System.out.println(string.substring(3, string.length()));
+		} else {
+			System.out.println(string);
+		}
+
 	}
 }
