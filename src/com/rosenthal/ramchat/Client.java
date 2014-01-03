@@ -15,6 +15,7 @@ public class Client {
 	private int port;	
 	private InetAddress ip;
 	private Thread send;
+	private int ID = -1;
 	
 	public Client(String name, String address, int port) {
 		this.name = name;
@@ -48,6 +49,18 @@ public class Client {
 		return true;
 	}
 	
+	public String receive() {
+		byte[] data = new byte[1024];
+		DatagramPacket packet = new DatagramPacket(data, data.length);
+		try {
+			socket.receive(packet);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String message = new String(packet.getData());
+		return message;
+	}
+	
 	public void send(final byte[] data) {
 		send = new Thread("Send") {
 			public void run() {
@@ -61,17 +74,13 @@ public class Client {
 		};
 		send.start();
 	}
-
-	public String receive() {
-		byte[] data = new byte[1024];
-		DatagramPacket packet = new DatagramPacket(data, data.length);
-		try {
-			socket.receive(packet);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		String message = new String(packet.getData());
-		return message;
+	
+	public void setID(int id) {
+		this.ID = id;
+	}
+	
+	public int getID() {
+		return ID;
 	}
 
 }
