@@ -105,9 +105,9 @@ public class Login extends JFrame {
 	 * Logs you into the game!
 	 */
 
-	private void login(String name, String address, int port) {
+	public void login(String name, String address, int port) {
 		dispose();
-		new Client(name, address, port);
+		new ClientWindow(name, address, port);
 	}
 
 	/**
