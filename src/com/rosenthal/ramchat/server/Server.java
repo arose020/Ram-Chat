@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Server implements Runnable {
 
@@ -19,6 +20,8 @@ public class Server implements Runnable {
 	private Thread run, manage, send, recieve;
 
 	private final int MAX_ATTEMPTS = 5;
+
+	private boolean raw = false;
 
 	public Server(int port) {
 		this.port = port;
@@ -33,6 +36,11 @@ public class Server implements Runnable {
 	}
 
 	private void sendToAll(String message) {
+		if (message.startsWith("/m/")) {
+			String text = message.substring(3);
+			text = text.split("/e/")[0];
+			System.out.println(message);
+		}
 		for (int i = 0; i < clients.size(); i++) {
 			ServerClient client = clients.get(i);
 			send(message.getBytes(), client.address, client.port);
@@ -60,6 +68,58 @@ public class Server implements Runnable {
 		System.out.println("Server started on port " + port);
 		manageClients();
 		recieve();
+		Scanner scanner = new Scanner(System.in);
+		while (running) {
+			String text = scanner.nextLine();
+			if (!text.startsWith("/")) {
+				sendToAll("/m/Server: " + text + "/e/");
+				continue;
+			}
+			text = text.substring(1);
+			if (text.equals("raw")) {
+				raw = !raw;
+			} else if (text.equals("clients")) {
+				System.out.println("Clients:");
+				System.out.println("========");
+				for (int i = 0; i < clients.size(); i++) {
+					ServerClient c = clients.get(i);
+					System.out.println(c.name + "(" + c.getID() + "): "
+							+ c.address.toString() + ":" + c.port);
+				}
+				System.out.println("========");
+			} else if (text.startsWith("kick")) {
+				String name = text.split(" ")[1];
+				int id = -1;
+				boolean number = true;
+				try {
+					id = Integer.parseInt(name);
+				} catch (NumberFormatException e) {
+					number = false;
+				}
+				if (number) {
+					boolean exists = false;
+					for (int i = 0; i < clients.size(); i++) {
+						if (clients.get(i).getID() == id) {
+							exists = true;
+							break;
+						}
+					}
+					if (exists)
+						disconnect(id, true);
+					else
+						System.out.println("Client " + id
+								+ " doesn't exist! Check ID number.");
+				} else {
+					for (int i = 0; i < clients.size(); i++) {
+						ServerClient c = clients.get(i);
+						if (name.equals(c.name)) {
+							disconnect(c.getID(), true);
+							break;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private void manageClients() {
@@ -117,14 +177,13 @@ public class Server implements Runnable {
 
 	private void proscess(DatagramPacket packet) {
 		String string = new String(packet.getData());
+		if (raw)
+			System.out.println(string);
 		if (string.startsWith("/c/")) {
-			// Unique Identifier Basicly does: UUID id = UUID.randomUUID(); in a
-			// realistic way
 			int id = UniqueIdentifier.getIdentifier();
-			System.out.println("Client Identifier: " + id);
-			clients.add(new ServerClient(string.substring(3, string.length()),
-					packet.getAddress(), packet.getPort(), id));
-			System.out.println(string.substring(3, string.length()));
+			String name = string.split("/c/|/e/")[1];
+			System.out.println(name + " [" + id + "] connected!");
+			clients.add(new ServerClient(name, packet.getAddress(), packet.getPort(), id));
 			String ID = "/c/" + id;
 			send(ID, packet.getAddress(), packet.getPort());
 		} else if (string.startsWith("/m/")) {
@@ -141,19 +200,22 @@ public class Server implements Runnable {
 
 	private void disconnect(int id, boolean status) {
 		ServerClient c = null;
+		boolean existed = false;
 		for (int i = 0; i < clients.size(); i++) {
 			if (clients.get(i).getID() == id) {
 				c = clients.get(i);
 				clients.remove(i);
+				existed = true;
 				break;
 			}
 		}
+		if (existed) return;
 		String message = "";
 		if (status) {
-			message = "Client " + c.name + "(" + c.getID() + ") @ "
+			message = "Client " + c.name + " (" + c.getID() + ") @ "
 					+ c.address.toString() + ":" + c.port + " disconnected.";
 		} else {
-			message = "Client " + c.name + "(" + c.getID() + ") @ "
+			message = "Client " + c.name + " (" + c.getID() + ") @ "
 					+ c.address.toString() + ":" + c.port + " timed out.";
 		}
 		System.out.println(message);
